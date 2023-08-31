@@ -14,7 +14,7 @@ router.post('/add', async function (request, response) {
 
   //Add user details to the database
   try {
-    //dbusers.add(request)
+    dbusers.add(request.body)
     console.log(request.body)
     response.send(request.body)
 
