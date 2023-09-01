@@ -1,20 +1,27 @@
-const { OAuth2Client } = require('google-auth-library');
-const CLIENT_ID="266691138498-229lt4vgiipq2khh3es66opdsvicehj0.apps.googleusercontent.com";
-const client = new OAuth2Client(CLIENT_ID);
-const dbusers = require('../db/users')
-var express = require('express');
-var router = express.Router();
+const dbUsers = require('../db/users')
+let express = require('express');
+let router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.get('/:userId', function(req, res) {
+  dbUsers.get(req.params.userId, function(err, content) {
+      if (err) {
+        res.send({"Error": err.toString()});
+      } else {
+        if (!content || content.length === 0) {
+          res.send({"Error":"No user found for this id: " + req.params.userId})
+        } else {
+          res.send(content[0]);
+        }
+      }
+  });
 });
 
 router.post('/add', async function (request, response) {
 
   //Add user details to the database
   try {
-    dbusers.add(request.body)
+    dbUsers.add(request.body)
     console.log(request.body)
     response.send(request.body)
 

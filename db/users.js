@@ -6,5 +6,18 @@ exports.add = function(user) {
 
     conn.query(insert_sql, function(err, result){
         if(err) throw err;
+        return result
+    });
+}
+
+exports.get = function(id, callback) {
+    let get_sql = "SELECT * FROM users where id='" + id+"'";
+
+    conn.query(get_sql, function(err, result){
+        if(err) {
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
     });
 }
