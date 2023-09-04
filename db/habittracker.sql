@@ -1,8 +1,8 @@
 use habit_tracker;
 drop table if exists habits;
-drop table if exists users;
--- users table
-create table users
+drop table if exists usersTest;
+-- usersTest table
+create table usersTest
 (
     id varchar(255) primary key,
     email varchar(127) null,
@@ -23,7 +23,7 @@ create table habits
     active      boolean default true not null,
     created_on  datetime             not null,
     constraint user_id_key
-        foreign key (user_id) references users (id),
+        foreign key (user_id) references usersTest (id),
     constraint habit_key
         primary key (id)
 );

@@ -1,23 +1,24 @@
-let conn = require ("./db_connection")
-exports.add = function(user) {
+const db = require('./db_connection')
+// const db = require('mysql2/promise');
+
+exports.add = async function(user) {
 
     let insert_sql = "INSERT INTO users (id, email, first_name, last_name, full_name) values (" +
         user.sub.toString() + ",'" + user.email + "','" + user.given_name + "','" + user.family_name + "','" + user.name + "')"
 
-    conn.query(insert_sql, function(err, result){
+    let conn = await db.getConnection();
+    await conn.query(insert_sql, function(err, result){
         if(err) throw err;
         return result
     });
 }
 
-exports.get = function(id, callback) {
+exports.get = async function(id) {
     let get_sql = "SELECT * FROM users where id='" + id+"'";
-
-    conn.query(get_sql, function(err, result){
-        if(err) {
-            callback(err, null);
-        } else {
-            callback(null, result);
-        }
-    });
+    let conn = await db.getConnection();
+    let [rows] = await conn.query(get_sql);
+    if (rows.length === 0 || !rows) {
+        return {"Error": "No user found for this id: " + id}
+    }
+    return rows;
 }

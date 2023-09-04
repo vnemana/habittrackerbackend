@@ -3,27 +3,21 @@ let express = require('express');
 let router = express.Router();
 
 /* GET users listing. */
-router.get('/:userId', function(req, res) {
-  dbUsers.get(req.params.userId, function(err, content) {
-      if (err) {
-        res.send({"Error": err.toString()});
-      } else {
-        if (!content || content.length === 0) {
-          res.send({"Error":"No user found for this id: " + req.params.userId})
-        } else {
-          res.send(content[0]);
-        }
-      }
-  });
+router.get('/:userId', async function(req, response) {
+  try {
+    response.send(await dbUsers.get(req.params.userId));
+  }catch (error) {
+    console.log("Error in Get: ", error);
+    return next(error);
+  }
 });
 
 router.post('/add', async function (request, response) {
 
   //Add user details to the database
   try {
-    dbUsers.add(request.body)
-    console.log(request.body)
-    response.send(request.body)
+    await dbUsers.add(request.body);
+    response.send(request.body);
 
   } catch (error) {
     console.error('Error verifying Google token:', error);
