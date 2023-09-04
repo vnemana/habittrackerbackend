@@ -5,8 +5,9 @@ let router = express.Router();
 /* GET users listing. */
 router.get('/:userId', async function(req, response) {
   try {
-    response.send(await dbUsers.get(req.params.userId));
-  }catch (error) {
+    let usersObj = new dbUsers();
+    response.send(await usersObj.getByUserId(req.params.userId));
+  } catch (error) {
     console.log("Error in Get: ", error);
     return next(error);
   }

@@ -1,29 +1,30 @@
 let mysql = require('mysql2/promise');
 let conn = null;
 
-exports.getConnection = async function() {
-    if (conn == null) {
-        conn = await mysql.createConnection({
-            host: process.env.HOSTNAME,
-            user: process.env.MYSQL_USER,
-            password: process.env.MYSQL_PASSWORD,
-            database: 'habit_tracker'
-        });
+class DbConnection {
+    #tableName = null;
+    #connection= null;
+    constructor(tableName) {
+        this.#tableName = tableName;
     }
-    return conn;
+
+    async getConnection() {
+        if (this.#connection == null) {
+            this.#connection = await mysql.createConnection({
+                host: process.env.HOSTNAME,
+                user: process.env.MYSQL_USER,
+                password: process.env.MYSQL_PASSWORD,
+                database: 'habit_tracker'
+            });
+        }
+        return this.#connection;
+    }
+
+    async closeConnection() {
+        if (this.#connection) {
+            this.#connection.end();
+        }
+    }
 }
 
-exports.closeConnection = async function() {
-    if (conn) {
-        await conn.end()
-    }
-}
-// conn.connect(function(err) {
-//     if(err) {
-//         console.log("Error connecting to db", err.toString())
-//         throw err;
-//     }
-//     console.log("Connected!")
-// });
-
-// module.exports = conn;
+module.exports = DbConnection;
