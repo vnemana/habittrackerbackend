@@ -12,7 +12,7 @@ afterAll( async () => {
 describe("db getters", ()=> {
     test('user not found', async() => {
         let result = await usersObj.getByUserId('1');
-        expect(result).toStrictEqual({'Error' : 'No user found for this id: 1'});
+        expect(result.length).toBe(0);
     });
 
     test('user found', async() => {
@@ -28,10 +28,10 @@ describe("db getters", ()=> {
 });
 
 describe("db add", () => {
-    beforeEach(async() => {
+    beforeAll(async() => {
         await usersObj.deleteByUserId('2');
     });
-    afterEach(async() => {
+    afterAll(async() => {
         await usersObj.deleteByUserId('2');
     });
     test('add with proper inputs works', async() => {
@@ -53,4 +53,35 @@ describe("db add", () => {
         });
     });
 });
+
+describe ("db update", () => {
+    beforeAll(async() => {
+        await usersObj.deleteByUserId('3');
+    });
+    afterAll(async() => {
+        await usersObj.deleteByUserId('3');
+    });
+    test('add with proper inputs works', async() => {
+        let user = {
+            sub: 3,
+            email: "venkat.nemana.dev@test.com",
+            given_name: "Venkat",
+            family_name: "Nemana",
+            name: "Venkat Nemana"
+        };
+        await usersObj.add(user);
+        user.given_name = "Pavithra";
+        usersObj.update(user);
+        let result = await usersObj.getByUserId('3');
+        expect(result.length).toBe(1);
+        expect(result[0]).toStrictEqual({
+            "id":"3",
+            "email":"venkat.nemana.dev@test.com",
+            "first_name":"Pavithra",
+            "last_name": "Nemana",
+            "full_name": "Venkat Nemana"
+        });
+    });
+})
+
 

@@ -10,9 +10,6 @@ class Users extends DbConnection {
         let get_sql = "SELECT * FROM " + this.#tableName + " where id='" + id+"'";
         let conn = await super.getConnection();
         let [rows] = await conn.query(get_sql);
-        if (rows.length === 0 || !rows) {
-            return {"Error": "No user found for this id: " + id}
-        }
         return rows;
     }
 
@@ -30,6 +27,14 @@ class Users extends DbConnection {
 
         let conn = await super.getConnection();
         await conn.query(delete_sql);
+    }
+
+    async update(user) {
+        let update_sql = "UPDATE users SET "+
+            "email = '" + user.email + "', first_name = '" + user.given_name + "', last_name = '" + user.family_name +
+            "', email = '" + user.email + "', full_name = '" + user.name + "' WHERE id='" + user.sub +"'";
+        let conn = await super.getConnection();
+        await conn.query(update_sql);
     }
 }
 
