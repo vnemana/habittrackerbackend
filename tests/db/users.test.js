@@ -1,13 +1,26 @@
-const users = require('../../db/users');
-const mysql = require('mysql2/promise')
-
+const Users = require('../../db/users');
 let usersObj = null;
 beforeAll(() => {
-    usersObj = new users();
+    usersObj = new Users();
 })
 afterAll( async () => {
     await usersObj.closeConnection();
 });
+
+function assertUserContent(result, expectedId, expectedEmail, expectedFirstName, expectedLastName, expectedName) {
+    expect(result[0]).toStrictEqual({
+        "id": expectedId,
+        "email": expectedEmail,
+        "first_name": expectedFirstName,
+        "last_name": expectedLastName,
+        "full_name": expectedName
+    });
+}
+
+function createUser(id, email, givenName, familyName, name) {
+    return { sub: id,  email: email, given_name: givenName, family_name: familyName, name: name
+    };
+}
 
 describe("db getters", ()=> {
     test('user not found', async() => {
@@ -18,12 +31,8 @@ describe("db getters", ()=> {
     test('user found', async() => {
         let result = await usersObj.getByUserId('109921579247845694480');
         expect(result.length).toBe(1);
-        expect(result[0]).toStrictEqual({
-            "id":"109921579247845694480",
-            "email":"venkat.nemana.dev@gmail.com",
-            "first_name":"Venkat",
-            "last_name":"Nemana",
-            "full_name":"Venkat Nemana"})
+        assertUserContent(result, "109921579247845694480", "venkat.nemana.dev@gmail.com",
+            "Venkat", "Nemana", "Venkat Nemana");
     });
 });
 
@@ -35,22 +44,12 @@ describe("db add", () => {
         await usersObj.deleteByUserId('2');
     });
     test('add with proper inputs works', async() => {
-        let user = {
-            sub:2,
-            email:"venkat.nemana.dev@test.com",
-            given_name:"Venkat",
-            family_name:"Nemana",
-            name:"Venkat Nemana"};
+        let user = createUser(2, "venkat.nemana.dev@test.com", "Venkat", "Nemana", "Venkat Nemana");
         await usersObj.add(user);
         let result = await usersObj.getByUserId('2');
         expect(result.length).toBe(1);
-        expect(result[0]).toStrictEqual({
-            "id":"2",
-            "email":"venkat.nemana.dev@test.com",
-            "first_name":"Venkat",
-            "last_name": "Nemana",
-            "full_name": "Venkat Nemana"
-        });
+        assertUserContent(result, "2", "venkat.nemana.dev@test.com", "Venkat",
+            "Nemana", "Venkat Nemana");
     });
 });
 
@@ -62,26 +61,14 @@ describe ("db update", () => {
         await usersObj.deleteByUserId('3');
     });
     test('add with proper inputs works', async() => {
-        let user = {
-            sub: 3,
-            email: "venkat.nemana.dev@test.com",
-            given_name: "Venkat",
-            family_name: "Nemana",
-            name: "Venkat Nemana"
-        };
+        let user = createUser(3, "venkat.nemana.dev@test.com", "Venkat", "Nemana",
+            "Venkat Nemana");
         await usersObj.add(user);
         user.given_name = "Pavithra";
         usersObj.update(user);
         let result = await usersObj.getByUserId('3');
         expect(result.length).toBe(1);
-        expect(result[0]).toStrictEqual({
-            "id":"3",
-            "email":"venkat.nemana.dev@test.com",
-            "first_name":"Pavithra",
-            "last_name": "Nemana",
-            "full_name": "Venkat Nemana"
-        });
+        assertUserContent(result, "3", "venkat.nemana.dev@test.com", "Pavithra",
+            "Nemana", "Venkat Nemana");
     });
 })
-
-

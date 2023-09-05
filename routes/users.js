@@ -17,7 +17,8 @@ router.post('/add', async function (request, response) {
 
   //Add user details to the database
   try {
-    await dbUsers.add(request.body);
+    let usersObj = new dbUsers();
+    await usersObj.add(request.body);
     response.send(request.body);
 
   } catch (error) {

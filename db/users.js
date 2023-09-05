@@ -11,6 +11,7 @@ class Users extends DbConnection {
         let conn = await super.getConnection();
         let [rows] = await conn.query(get_sql);
         return rows;
+
     }
 
     async add(userData) {
