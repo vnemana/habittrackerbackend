@@ -31,11 +31,10 @@ class Users extends DbConnection {
     }
 
     async update(user) {
-        let update_sql = "UPDATE users SET "+
-            "email = '" + user.email + "', first_name = '" + user.given_name + "', last_name = '" + user.family_name +
-            "', email = '" + user.email + "', full_name = '" + user.name + "' WHERE id='" + user.sub +"'";
+        let update_sql = "UPDATE users SET email=?, first_name=?, last_name=?, full_name=? WHERE id=?";
+        let data = [user.email, user.given_name, user.family_name, user.name, user.sub];
         let conn = await super.getConnection();
-        await conn.query(update_sql);
+        await conn.query(update_sql, data);
     }
 }
 
