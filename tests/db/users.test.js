@@ -33,7 +33,7 @@ describe("db add", () => {
     beforeAll(async() => {
         await usersObj.deleteByUserId('2');
     });
-    afterAll(async() => {
+    afterEach(async() => {
         await usersObj.deleteByUserId('2');
     });
     test('add with proper inputs works', async() => {
@@ -43,6 +43,19 @@ describe("db add", () => {
         expect(result.length).toBe(1);
         assertUserContent(result, "2", "venkat.nemana.dev@test.com", "Venkat",
             "Nemana", "Venkat Nemana");
+    });
+
+    test('add duplicate data catches exception', async() => {
+        let user = createUser(2, 'test@email.com', 'gName', 'fName', 'gName' +
+            ' fName');
+        await usersObj.add(user);
+        const t = async () => {
+            await usersObj.add(user);
+        };
+        let result = await usersObj.getByUserId('2');
+        expect(result.length).toBe(1);
+        assertUserContent(result, "2", "test@email.com", "gName",
+            "fName", "gName fName");
     });
 });
 
