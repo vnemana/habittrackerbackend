@@ -11,7 +11,7 @@ class DbConnection {
     async getConnection() {
         if (this.#connection == null) {
             this.#connection = await mysql.createConnection({
-                host: process.env.HOSTNAME,
+                host: process.env.MYSQL_HOSTNAME,
                 user: process.env.MYSQL_USER,
                 password: process.env.MYSQL_PASSWORD,
                 database: 'habit_tracker'

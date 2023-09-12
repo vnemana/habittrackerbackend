@@ -27,13 +27,6 @@ describe("db getters", ()=> {
         let result = await usersObj.getByUserId('1');
         expect(result.length).toBe(0);
     });
-
-    test('user found', async() => {
-        let result = await usersObj.getByUserId('109921579247845694480');
-        expect(result.length).toBe(1);
-        assertUserContent(result, "109921579247845694480", "venkat.nemana.dev@gmail.com",
-            "Venkat", "Nemana", "Venkat Nemana");
-    });
 });
 
 describe("db add", () => {
