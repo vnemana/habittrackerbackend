@@ -18,6 +18,12 @@ router.post('/add', async function (request, response) {
   //Add user details to the database
   try {
     let usersObj = new dbUsers();
+    let user = await usersObj.getByUserId(request.body.sub);
+    if (user.length === 1) {
+      console.log("User already exists: ", user);
+      response.send(user);
+      return;
+    }
     await usersObj.add(request.body);
     response.send(request.body);
 
