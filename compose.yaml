@@ -1,0 +1,35 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+      MYSQL_HOSTNAME: mysql_server
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - 3000:3000
+    depends_on:
+      - mysql_server
+    volumes:
+      - .:/usr/src/app
+    
+  mysql_server:
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ./db/habittracker.sql:/docker-entrypoint-initdb.d/init.sql

@@ -14,7 +14,14 @@ class DbConnection {
                 host: process.env.MYSQL_HOSTNAME,
                 user: process.env.MYSQL_USER,
                 password: process.env.MYSQL_PASSWORD,
-                database: 'habit_tracker'
+                database: process.env.MYSQL_DATABASE
+            });
+            this.#connection.connect((err) => {
+                if (err) {
+                  console.error('Error connecting to MySQL:', err.message);
+                } else {
+                  console.log('Connected to MySQL!');
+                }
             });
         }
         return this.#connection;
